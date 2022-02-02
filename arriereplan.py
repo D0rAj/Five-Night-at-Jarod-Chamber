@@ -17,12 +17,38 @@ class ArrierePlan(animation.AnimateSprite):
         self.horny_bar_max_width = 300
         self.is_playing = False
 
+    def quit(self, loop):
+        loop = False
+
     def update(self, screen, sperme):
         screen.blit(self.image, self.rect)
         if not self.at_door:
             screen.blit(sperme, (0, 0))
         self.update_animation()
         self.update_horny_bar(screen)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    if not self.at_door:
+                        self.branlette_down()
+                    elif self.at_door:
+                        self.close_door()
+                if event.key == pygame.K_LCTRL:
+                    if self.at_door:
+                        self.flashlight_on()
+                if event.key == pygame.K_w:
+                    self.start_animation()
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    if not self.at_door:
+                        self.branlette_up()
+                    elif self.at_door:
+                        self.open_door()
+                if event.key == pygame.K_LCTRL:
+                    if self.at_door:
+                        self.flashlight_off()
 
     def update_horny_bar(self, surface):
         horny_bar_color = (255, 255, 255)

@@ -22,34 +22,12 @@ while running:
         arriere_plan.update(screen, sperme)
     else:
         screen.blit(play_button, play_button_rect)
-    pygame.display.flip()
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        if arriere_plan.is_playing:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    if not arriere_plan.at_door:
-                        arriere_plan.branlette_down()
-                    elif arriere_plan.at_door:
-                        arriere_plan.close_door()
-                if event.key == pygame.K_LCTRL:
-                    if arriere_plan.at_door:
-                        arriere_plan.flashlight_on()
-                if event.key == pygame.K_w:
-                    arriere_plan.start_animation()
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_SPACE:
-                    if not arriere_plan.at_door:
-                        arriere_plan.branlette_up()
-                    elif arriere_plan.at_door:
-                        arriere_plan.open_door()
-                if event.key == pygame.K_LCTRL:
-                    if arriere_plan.at_door:
-                        arriere_plan.flashlight_off()
-        else:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play_button_rect.collidepoint(pygame.mouse.get_pos()):
                     arriere_plan.is_playing = True
+    pygame.display.flip()
     clock.tick(7)
 pygame.quit()

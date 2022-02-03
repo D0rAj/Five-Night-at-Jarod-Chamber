@@ -19,10 +19,12 @@ running = True
 while running:
     screen.blit(background, (0, 0))
     if arriere_plan.is_playing:
+        running = arriere_plan.quit_check()
         arriere_plan.update(screen, sperme)
     else:
         screen.blit(play_button, play_button_rect)
         for event in pygame.event.get():
+            print(pygame.QUIT)
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:

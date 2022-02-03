@@ -17,8 +17,11 @@ class ArrierePlan(animation.AnimateSprite):
         self.horny_bar_max_width = 300
         self.is_playing = False
 
-    def quit(self, loop):
-        loop = False
+    def quit_check(self):
+            if pygame.QUIT:
+                return False
+            else:
+                return True
 
     def update(self, screen, sperme):
         screen.blit(self.image, self.rect)
@@ -27,8 +30,6 @@ class ArrierePlan(animation.AnimateSprite):
         self.update_animation()
         self.update_horny_bar(screen)
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     if not self.at_door:

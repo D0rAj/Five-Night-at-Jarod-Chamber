@@ -6,7 +6,7 @@ import animation
 class ArrierePlan(animation.AnimateSprite):
 
     def __init__(self):
-        super().__init__('chambre')
+        super().__init__('chambre', 'lit')
         self.image = pygame.image.load('assets/chambre.png')
         self.rect = self.image.get_rect()
         self.velocity = 15
@@ -39,8 +39,10 @@ class ArrierePlan(animation.AnimateSprite):
                 if event.key == pygame.K_LCTRL:
                     if self.at_door:
                         self.flashlight_on()
-                if event.key == pygame.K_w:
-                    self.start_animation()
+                if event.key == pygame.K_d:
+                    self.start_animation('porte')
+                if event.key == pygame.k_a:
+                    self.start_animation('lit')
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_SPACE:
                     if not self.at_door:

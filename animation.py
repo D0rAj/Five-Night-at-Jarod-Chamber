@@ -24,43 +24,45 @@ class AnimateSprite(pygame.sprite.Sprite):
     def animate(self):
         if self.animation:
             if self.go_door:
-                if not self.at_door:
-                    self.current_image += 1
-                    if self.current_image == 6:
-                        self.image = self.images[self.current_image]
-                        self.go_door = False
-                        self.animation = False
-                        self.at_door = True
-                    else:
-                        self.image = self.images[self.current_image]
-                elif self.at_door:
-                    self.current_image -= 1
-                    if self.current_image == 0:
-                        self.image = self.images[self.current_image]
-                        self.go_door = False
-                        self.animation = False
-                        self.at_door = False
-                    else:
-                        self.image = self.images[self.current_image]
-            elif self.go_bed:
                 if not self.at_bed:
-                    self.current_image += 1
-                    if self.current_image == 6:
-                        self.image = self.images[self.current_image]
-                        self.go_bed = False
-                        self.animation = False
-                        self.at_bed = True
-                    else:
-                        self.image = self.images[self.current_image]
-                elif self.at_bed:
-                    self.current_image -= 1
-                    if self.current_image == 0:
-                        self.image = self.images[self.current_image]
-                        self.go_bed = False
-                        self.animation = False
-                        self.at_door = False
-                    else:
-                        self.image = self.images[self.current_image]
+                    if not self.at_door:
+                        self.current_image += 1
+                        if self.current_image == 6:
+                            self.image = self.images[self.current_image]
+                            self.go_door = False
+                            self.animation = False
+                            self.at_door = True
+                        else:
+                            self.image = self.images[self.current_image]
+                    elif self.at_door:
+                        self.current_image -= 1
+                        if self.current_image == 0:
+                            self.image = self.images[self.current_image]
+                            self.go_door = False
+                            self.animation = False
+                            self.at_door = False
+                        else:
+                            self.image = self.images[self.current_image]
+            elif self.go_bed:
+                if not self.at_door:
+                    if not self.at_bed:
+                        self.current_image += 1
+                        if self.current_image == 2:
+                            self.image = self.images2[self.current_image]
+                            self.go_bed = False
+                            self.animation = False
+                            self.at_bed = True
+                        else:
+                            self.image = self.images2[self.current_image]
+                    elif self.at_bed:
+                        self.current_image -= 1
+                        if self.current_image == 0:
+                            self.image = self.images2[self.current_image]
+                            self.go_bed = False
+                            self.animation = False
+                            self.at_bed = False
+                        else:
+                            self.image = self.images2[self.current_image]
 
 
 def load_animation_images(sprite_name, nbr_sprite):
@@ -75,5 +77,5 @@ def load_animation_images(sprite_name, nbr_sprite):
 
 animations = {
     'chambre': load_animation_images('chambre', 9),
-    'lit': load_animation_images('lit', 5)
+    'lit': load_animation_images('lit', 6)
 }

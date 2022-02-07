@@ -36,11 +36,9 @@ class ArrierePlan(animation.AnimateSprite):
                     if self.at_door:
                         self.flashlight_on()
                 if event.key == pygame.K_d:
-                    self.start_animation('porte') #    j'avais peur que sa marche pas mais c bon
+                    self.start_animation('porte')
                 if event.key == pygame.K_a:
-                    self.start_animation('lit')   # oui oui c'est des commentaires, c'est pas pris en compte par le code
-                    # justement je vais le faire
-                    
+                    self.start_animation('lit')
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_SPACE:
                     if not self.at_door:

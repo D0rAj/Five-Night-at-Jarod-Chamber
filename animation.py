@@ -63,10 +63,10 @@ class AnimateSprite(pygame.sprite.Sprite):
                         self.image = self.images[self.current_image]
 
 
-def load_animation_images(sprite_name):
+def load_animation_images(sprite_name, nbr_sprite):
     images = []
     path = f'assets/{sprite_name}/{sprite_name}'
-    for num in range(1, 9):
+    for num in range(1, nbr_sprite):
         image_path = path + str(num) + '.png'
         images.append(pygame.image.load(image_path))
         print("loaded : " + str(image_path))
@@ -74,6 +74,6 @@ def load_animation_images(sprite_name):
 
 
 animations = {
-    'chambre': load_animation_images('chambre'),
-    'lit': load_animation_images('lit')
+    'chambre': load_animation_images('chambre', 9),
+    'lit': load_animation_images('lit', 5)
 }

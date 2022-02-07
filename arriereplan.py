@@ -17,12 +17,6 @@ class ArrierePlan(animation.AnimateSprite):
         self.horny_bar_max_width = 300
         self.is_playing = False
 
-    def quit_check(self):
-            if pygame.QUIT:
-                return False
-            else:
-                return True
-
     def update(self, screen, sperme):
         screen.blit(self.image, self.rect)
         if not self.at_door:
@@ -30,6 +24,8 @@ class ArrierePlan(animation.AnimateSprite):
         self.update_animation()
         self.update_horny_bar(screen)
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     if not self.at_door:
@@ -40,9 +36,11 @@ class ArrierePlan(animation.AnimateSprite):
                     if self.at_door:
                         self.flashlight_on()
                 if event.key == pygame.K_d:
-                    self.start_animation('porte')
-                if event.key == pygame.k_a:
-                    self.start_animation('lit')
+                    self.start_animation('porte') #    j'avais peur que sa marche pas mais c bon
+                if event.key == pygame.K_a:
+                    self.start_animation('lit')   # oui oui c'est des commentaires, c'est pas pris en compte par le code
+                    # justement je vais le faire
+                    
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_SPACE:
                     if not self.at_door:

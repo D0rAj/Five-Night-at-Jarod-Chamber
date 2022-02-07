@@ -47,7 +47,7 @@ class AnimateSprite(pygame.sprite.Sprite):
                 if not self.at_door:
                     if not self.at_bed:
                         self.current_image += 1
-                        if self.current_image == 2:
+                        if self.current_image == 3:
                             self.image = self.images2[self.current_image]
                             self.go_bed = False
                             self.animation = False

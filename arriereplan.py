@@ -28,10 +28,12 @@ class ArrierePlan(animation.AnimateSprite):
                 pygame.quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    if not self.at_door:
+                    if not self.at_door and not self.at_bed:
                         self.branlette_down()
                     elif self.at_door:
                         self.close_door()
+                    elif self.at_bed:
+                        self.flashlight_on()
                 if event.key == pygame.K_LCTRL:
                     if self.at_door:
                         self.flashlight_on()
@@ -41,10 +43,12 @@ class ArrierePlan(animation.AnimateSprite):
                     self.start_animation('lit')
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_SPACE:
-                    if not self.at_door:
+                    if not self.at_door and not self.at_bed:
                         self.branlette_up()
                     elif self.at_door:
                         self.open_door()
+                    elif self.at_bed:
+                        self.flashlight_off()
                 if event.key == pygame.K_LCTRL:
                     if self.at_door:
                         self.flashlight_off()
@@ -86,7 +90,13 @@ class ArrierePlan(animation.AnimateSprite):
         self.image = pygame.image.load('assets/chambre/chambre7.png')
 
     def flashlight_on(self):
-        self.image = pygame.image.load('assets/chambre/chambre8.png')
+        if self.at_door:
+            self.image = pygame.image.load('assets/chambre/chambre8.png')
+        elif self.at_bed:
+            self.image = pygame.image.load('assets/lit/lit5.png')
 
     def flashlight_off(self):
-        self.image = pygame.image.load('assets/chambre/chambre7.png')
+        if self.at_door:
+            self.image = pygame.image.load('assets/chambre/chambre7.png')
+        elif self.at_bed:
+            self.image = pygame.image.load('assets/lit/lit4.png')

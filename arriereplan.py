@@ -1,6 +1,5 @@
 import pygame
 import animation
-# Arriere plan
 
 
 class ArrierePlan(animation.AnimateSprite):
@@ -19,10 +18,8 @@ class ArrierePlan(animation.AnimateSprite):
 
     def update(self, screen, sperme):
         screen.blit(self.image, self.rect)
-        if not self.at_door:
-            screen.blit(sperme, (0, 0))
         self.update_animation()
-        self.update_horny_bar(screen)
+        self.update_horny_bar(screen, sperme)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -31,29 +28,35 @@ class ArrierePlan(animation.AnimateSprite):
                     if not self.at_door and not self.at_bed:
                         self.branlette_down()
                     elif self.at_door:
-                        self.close_door()
+                        self.flashlight_on()
                     elif self.at_bed:
                         self.flashlight_on()
                 if event.key == pygame.K_LCTRL:
                     if self.at_door:
-                        self.flashlight_on()
+                        self.close_door()
                 if event.key == pygame.K_d:
-                    self.start_animation('porte')
+                    if not self.at_door and not self.at_bed:
+                        self.start_animation('porte')
+                    elif self.at_bed:
+                        self.start_animation('lit')
                 if event.key == pygame.K_a:
-                    self.start_animation('lit')
+                    if not self.at_bed and not self.at_door:
+                        self.start_animation('lit')
+                    elif self.at_door:
+                        self.start_animation('porte')
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_SPACE:
                     if not self.at_door and not self.at_bed:
                         self.branlette_up()
                     elif self.at_door:
-                        self.open_door()
+                        self.flashlight_off()
                     elif self.at_bed:
                         self.flashlight_off()
                 if event.key == pygame.K_LCTRL:
                     if self.at_door:
-                        self.flashlight_off()
+                        self.open_door()
 
-    def update_horny_bar(self, surface):
+    def update_horny_bar(self, surface, sperme):
         horny_bar_color = (255, 255, 255)
         back_horny_bar_color = (0, 0, 0)
 
@@ -61,13 +64,14 @@ class ArrierePlan(animation.AnimateSprite):
         back_horny_bar_position = [250, 550, self.horny_bar_max_width, 25]
 
         self.horny_bar_width -= 1
-        if not self.at_door:
+        if not self.at_door and not self.at_bed:
             if self.horny_bar_width > 300:
                 self.horny_bar_width = 300
             if self.horny_bar_width <= 0:
                 pygame.quit()
             pygame.draw.rect(surface, back_horny_bar_color, back_horny_bar_position)
             pygame.draw.rect(surface, horny_bar_color, horny_bar_position)
+            surface.blit(sperme, (0, 0))
 
     def up_horny_bar(self):
         self.horny_bar_width += 20

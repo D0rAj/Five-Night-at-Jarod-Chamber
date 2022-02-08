@@ -9,7 +9,7 @@ class ArrierePlan(animation.AnimateSprite):
         self.image = pygame.image.load('assets/chambre.png')
         self.rect = self.image.get_rect()
         self.velocity = 15
-        self.fap = pygame.mixer.Sound('assets/fap.wav')
+        self.fap = pygame.mixer.Sound('sound/fap.wav')
         self.rect.y = 0
         self.rect.x = 0
         self.horny_bar_width = 300
@@ -80,12 +80,12 @@ class ArrierePlan(animation.AnimateSprite):
         self.animate()
 
     def branlette_down(self):
-        self.rect.y -= self.velocity
+        self.rect.y += self.velocity
         self.up_horny_bar()
         self.fap.play()
 
     def branlette_up(self):
-        self.rect.y += self.velocity
+        self.rect.y -= self.velocity
 
     def close_door(self):
         self.image = pygame.image.load('assets/chambre/chambre6.png')
@@ -104,3 +104,10 @@ class ArrierePlan(animation.AnimateSprite):
             self.image = pygame.image.load('assets/chambre/chambre7.png')
         elif self.at_bed:
             self.image = pygame.image.load('assets/lit/lit4.png')
+
+    def Step_sounds(self):
+        sounds = []
+        for i in range(1,5):
+            sounds.append(pygame.mixer.Sound(f'sound/pas_{i}.mp3'))
+            print(f'loaded : sound/pas_{i}.mp3')
+        return sounds

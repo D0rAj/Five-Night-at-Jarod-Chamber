@@ -1,4 +1,5 @@
 import pygame
+import random
 
 
 class AnimateSprite(pygame.sprite.Sprite):
@@ -8,6 +9,7 @@ class AnimateSprite(pygame.sprite.Sprite):
         self.current_image = 0
         self.images = animations.get(sprite_name)
         self.images2 = animations.get(sprite_name2)
+        self.step_sounds = self.Step_sounds()
         self.animation = False
         self.at_door = False
         self.at_bed = False
@@ -23,6 +25,8 @@ class AnimateSprite(pygame.sprite.Sprite):
 
     def animate(self):
         if self.animation:
+            pas = random.choice(self.step_sounds)
+            pas.play()
             if self.go_door:
                 if not self.at_bed:
                     if not self.at_door:

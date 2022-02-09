@@ -1,5 +1,6 @@
 import pygame
 import animation
+import temps
 
 
 class ArrierePlan(animation.AnimateSprite):
@@ -20,6 +21,7 @@ class ArrierePlan(animation.AnimateSprite):
         screen.blit(self.image, self.rect)
         self.update_animation()
         self.update_horny_bar(screen, sperme)
+        self.update_time(screen)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -72,6 +74,10 @@ class ArrierePlan(animation.AnimateSprite):
             pygame.draw.rect(surface, back_horny_bar_color, back_horny_bar_position)
             pygame.draw.rect(surface, horny_bar_color, horny_bar_position)
             surface.blit(sperme, (0, 0))
+
+    def update_time(self, screen):
+        temps.Time.go_time()
+        temps.Time.write_time(screen, (0, 0))
 
     def up_horny_bar(self):
         self.horny_bar_width += 20

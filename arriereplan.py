@@ -1,6 +1,7 @@
 import pygame
 import animation
-import temps
+import time
+from temps import Time
 
 
 class ArrierePlan(animation.AnimateSprite):
@@ -15,6 +16,8 @@ class ArrierePlan(animation.AnimateSprite):
         self.rect.x = 0
         self.horny_bar_width = 300
         self.horny_bar_max_width = 300
+        self.hour = 0
+        self.size = 50
         self.is_playing = False
 
     def update(self, screen, sperme):
@@ -76,8 +79,8 @@ class ArrierePlan(animation.AnimateSprite):
             surface.blit(sperme, (0, 0))
 
     def update_time(self, screen):
-        temps.Time.go_time()
-        temps.Time.write_time(screen, (0, 0))
+        self.go_time()
+        self.write_time(screen)
 
     def up_horny_bar(self):
         self.horny_bar_width += 20
@@ -117,3 +120,16 @@ class ArrierePlan(animation.AnimateSprite):
             sounds.append(pygame.mixer.Sound(f'sound/pas_{i}.mp3'))
             print(f'loaded : sound/pas_{i}.mp3')
         return sounds
+
+    async def go_time(self):
+        if self.hour < 720:
+            self.hour += 1
+            time.sleep(1)
+
+    def what_hour(self):
+        hour = self.hour / 90
+        return hour
+
+    def write_time(self, screen):
+        text = pygame.font.Font('font.ttf', self.size).render(str(self.what_hour()) + ' pm', True, (255, 255, 255))
+        screen.blit(text, (0, 0))

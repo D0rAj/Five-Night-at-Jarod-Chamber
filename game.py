@@ -2,7 +2,7 @@ import pygame
 import animation
 
 
-class ArrierePlan(animation.AnimateSprite):
+class Game(animation.AnimateSprite):
 
     def __init__(self):
         super().__init__('chambre', 'lit')
@@ -18,6 +18,7 @@ class ArrierePlan(animation.AnimateSprite):
         self.size = 50
         self.sleep = 0
         self.is_playing = False
+        self.running = True
 
     def update(self, screen, sperme):
         screen.blit(self.image, self.rect)
@@ -26,7 +27,7 @@ class ArrierePlan(animation.AnimateSprite):
         self.update_time(screen)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                self.running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     if not self.at_door and not self.at_bed:

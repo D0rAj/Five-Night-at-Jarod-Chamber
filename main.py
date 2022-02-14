@@ -7,7 +7,6 @@ pygame.display.set_caption("Five Night at Jarod Chamber")
 game = Game()
 # background
 background = pygame.image.load('assets/noir.png')
-sperme = pygame.image.load('assets/goutte_do.png')
 play_button = pygame.image.load('assets/NEW_GAME.png')
 play_button = pygame.transform.scale(play_button, (200, 50))
 play_button_rect = play_button.get_rect()
@@ -22,7 +21,7 @@ running = True
 while game.running:
     screen.blit(background, (0, 0))
     if game.is_playing:
-        game.update(screen, sperme)
+        game.update(screen)
     else:
         screen.blit(cadavre, (0, 0))
         screen.blit(title, (0, 0))

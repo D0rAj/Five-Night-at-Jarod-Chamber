@@ -7,6 +7,7 @@ class Game(animation.AnimateSprite):
     def __init__(self):
         super().__init__('chambre', 'lit')
         self.image = pygame.image.load('assets/chambre.png')
+        self.goute_do = pygame.image.load('assets/goutte_do.png')
         self.rect = self.image.get_rect()
         self.velocity = 15
         self.fap = pygame.mixer.Sound('sound/fap.wav')
@@ -20,10 +21,10 @@ class Game(animation.AnimateSprite):
         self.is_playing = False
         self.running = True
 
-    def update(self, screen, sperme):
+    def update(self, screen):
         screen.blit(self.image, self.rect)
         self.update_animation()
-        self.update_horny_bar(screen, sperme)
+        self.update_horny_bar(screen, self.goute_do)
         self.update_time(screen)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -61,14 +62,14 @@ class Game(animation.AnimateSprite):
                     if self.at_door:
                         self.open_door()
 
-    def update_horny_bar(self, surface, sperme):
+    def update_horny_bar(self, surface, goute_do):
         horny_bar_color = (255, 255, 255)
         back_horny_bar_color = (0, 0, 0)
 
         horny_bar_position = [250, 550, self.horny_bar_width, 25]
         back_horny_bar_position = [250, 550, self.horny_bar_max_width, 25]
 
-        self.horny_bar_width -= 1
+        self.horny_bar_width -= 0.5
         if not self.at_door and not self.at_bed:
             if self.horny_bar_width > 300:
                 self.horny_bar_width = 300
@@ -76,7 +77,7 @@ class Game(animation.AnimateSprite):
                 pygame.quit()
             pygame.draw.rect(surface, back_horny_bar_color, back_horny_bar_position)
             pygame.draw.rect(surface, horny_bar_color, horny_bar_position)
-            surface.blit(sperme, (0, 0))
+            surface.blit(goute_do, (0, 0))
 
     def update_time(self, screen):
         self.go_time()
@@ -150,8 +151,8 @@ class Game(animation.AnimateSprite):
 
     def write_time(self, screen):
         if self.what_hour() == 12:
-            heure = ' am'
-        else:
             heure = ' pm'
+        else:
+            heure = ' am'
         text = pygame.font.Font('font.ttf', self.size).render(str(self.what_hour()) + heure, True, (255, 255, 255))
         screen.blit(text, (0, 0))

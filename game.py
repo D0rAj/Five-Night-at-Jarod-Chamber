@@ -87,7 +87,7 @@ class Game(animation.AnimateSprite):
         horny_bar_position = [250, 550, self.horny_bar_width, 25]
         back_horny_bar_position = [250, 550, self.horny_bar_max_width, 25]
 
-        self.horny_bar_width -= 0
+        self.horny_bar_width -= .5
         if not self.at_door and not self.at_bed:
             if self.horny_bar_width > 300:
                 self.horny_bar_width = 300

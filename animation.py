@@ -68,6 +68,13 @@ class AnimateSprite(pygame.sprite.Sprite):
                         else:
                             self.image = self.images2[self.current_image]
 
+    def Step_sounds(self):
+        sounds = []
+        for i in range(1, 5):
+            sounds.append(pygame.mixer.Sound(f'sound/pas_{i}.mp3'))
+            print(f'loaded : sound/pas_{i}.mp3')
+        return sounds
+
 
 def load_animation_images(sprite_name, nbr_sprite):
     images = []

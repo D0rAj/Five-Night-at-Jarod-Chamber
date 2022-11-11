@@ -15,52 +15,70 @@ class Game(animation.AnimateSprite):
         self.rect.x = 0
         self.horny_bar_width = 300
         self.horny_bar_max_width = 300
+        self.is_playing = False
+        self.running = True
         self.hour = 0
         self.size = 50
         self.sleep = 0
-        self.is_playing = False
-        self.running = True
+        self.cooldown = 280
+        self.cadavre = pygame.image.load('assets/CADAVRE.jpg')
+        self.cadavre = pygame.transform.scale(self.cadavre, (500, 400))
+        self.is_atdoor = False
+        self.is_atbed = False
+        self.screamer = False
+        self.scream = pygame.mixer.Sound('sound/screamer_prout.mp3')
+        self.screamtime = self.scream.get_length() * 7
+        self.screamed = False
+        self.paused = False
 
     def update(self, screen):
-        screen.blit(self.image, self.rect)
-        self.update_animation()
-        self.update_horny_bar(screen, self.goute_do)
-        self.update_time(screen)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    if not self.at_door and not self.at_bed:
-                        self.branlette_down()
-                    elif self.at_door:
-                        self.flashlight_on()
-                    elif self.at_bed:
-                        self.flashlight_on()
-                if event.key == pygame.K_LCTRL:
-                    if self.at_door:
-                        self.close_door()
-                if event.key == pygame.K_d:
-                    if not self.at_door and not self.at_bed:
-                        self.start_animation('porte')
-                    elif self.at_bed:
-                        self.start_animation('lit')
-                if event.key == pygame.K_a:
-                    if not self.at_bed and not self.at_door:
-                        self.start_animation('lit')
-                    elif self.at_door:
-                        self.start_animation('porte')
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_SPACE:
-                    if not self.at_door and not self.at_bed:
-                        self.branlette_up()
-                    elif self.at_door:
-                        self.flashlight_off()
-                    elif self.at_bed:
-                        self.flashlight_off()
-                if event.key == pygame.K_LCTRL:
-                    if self.at_door:
-                        self.open_door()
+        if self.paused:
+            self.pause()
+        elif self.screamer:
+            self.death_monster(screen)
+        else:
+            screen.blit(self.image, self.rect)
+            self.update_animation()
+            self.update_horny_bar(screen, self.goute_do)
+            self.update_time(screen)
+            self.update_monster(screen)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        if not self.at_door and not self.at_bed:
+                            self.branlette_down()
+                        elif self.at_door:
+                            self.flashlight_on()
+                        elif self.at_bed:
+                            self.flashlight_on()
+                    if event.key == pygame.K_LCTRL:
+                        if self.at_door:
+                            self.close_door()
+                    if event.key == pygame.K_d:
+                        if not self.at_door and not self.at_bed:
+                            self.start_animation('porte')
+                        elif self.at_bed:
+                            self.start_animation('lit')
+                    if event.key == pygame.K_a:
+                        if not self.at_bed and not self.at_door:
+                            self.start_animation('lit')
+                        elif self.at_door:
+                            self.start_animation('porte')
+                    if event.key == pygame.K_ESCAPE:
+                        self.is_playing = False
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_SPACE:
+                        if not self.at_door and not self.at_bed:
+                            self.branlette_up()
+                        elif self.at_door:
+                            self.flashlight_off()
+                        elif self.at_bed:
+                            self.flashlight_off()
+                    if event.key == pygame.K_LCTRL:
+                        if self.at_door:
+                            self.open_door()
 
     def update_horny_bar(self, surface, goute_do):
         horny_bar_color = (255, 255, 255)
@@ -69,12 +87,12 @@ class Game(animation.AnimateSprite):
         horny_bar_position = [250, 550, self.horny_bar_width, 25]
         back_horny_bar_position = [250, 550, self.horny_bar_max_width, 25]
 
-        self.horny_bar_width -= 0.5
+        self.horny_bar_width -= 0
         if not self.at_door and not self.at_bed:
             if self.horny_bar_width > 300:
                 self.horny_bar_width = 300
             if self.horny_bar_width <= 0:
-                pygame.quit()
+                self.is_playing = False
             pygame.draw.rect(surface, back_horny_bar_color, back_horny_bar_position)
             pygame.draw.rect(surface, horny_bar_color, horny_bar_position)
             surface.blit(goute_do, (0, 0))
@@ -83,11 +101,18 @@ class Game(animation.AnimateSprite):
         self.go_time()
         self.write_time(screen)
 
-    def up_horny_bar(self):
-        self.horny_bar_width += 20
-
     def update_animation(self):
         self.animate()
+
+    def update_monster(self, screen):
+        if self.cooldown > 0:
+            self.cooldown -= 1
+        else:
+            self.is_atdoor = True
+            self.cooldown = 840
+
+    def up_horny_bar(self):
+        self.horny_bar_width += 20
 
     def branlette_down(self):
         self.rect.y += self.velocity
@@ -105,7 +130,10 @@ class Game(animation.AnimateSprite):
 
     def flashlight_on(self):
         if self.at_door:
-            self.image = pygame.image.load('assets/chambre/chambre8.png')
+            if not self.is_atdoor:
+                self.image = pygame.image.load('assets/chambre/chambre8.png')
+            else:
+                self.screamer = True
         elif self.at_bed:
             self.image = pygame.image.load('assets/lit/lit5.png')
 
@@ -115,20 +143,12 @@ class Game(animation.AnimateSprite):
         elif self.at_bed:
             self.image = pygame.image.load('assets/lit/lit4.png')
 
-    def Step_sounds(self):
-        sounds = []
-        for i in range(1,5):
-            sounds.append(pygame.mixer.Sound(f'sound/pas_{i}.mp3'))
-            print(f'loaded : sound/pas_{i}.mp3')
-        return sounds
-
     def go_time(self):
         if self.hour < 720 and self.sleep > 7:
             self.hour += 1
             self.sleep = 0
         else:
             self.sleep += 1
-
 
     def what_hour(self):
         hour = self.hour / 90
@@ -156,3 +176,29 @@ class Game(animation.AnimateSprite):
             heure = ' am'
         text = pygame.font.Font('font.ttf', self.size).render(str(self.what_hour()) + heure, True, (255, 255, 255))
         screen.blit(text, (0, 0))
+
+    def death_monster(self, screen):
+        screen.blit(pygame.transform.scale(self.cadavre, (1500, 1500)), (-750, -200))
+        if not self.screamed:
+            self.scream.play()
+            self.screamed = True
+        if self.screamtime > 0:
+            self.screamtime -= 1
+        else:
+            self.screamer = False
+            self.is_playing = False
+
+    def death_cum(self):
+        pass
+
+    def reset(self):
+        self.screamed = False
+        self.is_atdoor = False
+        self.is_atbed = False
+        self.screamtime = self.scream.get_length() * 7
+        self.horny_bar_width = 300
+        self.screamer = True
+        self.paused = False
+
+    def pause(self):
+        pass

@@ -21,8 +21,6 @@ class Game(animation.AnimateSprite):
         self.size = 50
         self.sleep = 0
         self.cooldown = 280
-        self.cadavre = pygame.image.load('assets/CADAVRE.jpg')
-        self.cadavre = pygame.transform.scale(self.cadavre, (500, 400))
         self.is_atdoor = False
         self.is_atbed = False
         self.screamer = False
@@ -30,10 +28,25 @@ class Game(animation.AnimateSprite):
         self.screamtime = self.scream.get_length() * 7
         self.screamed = False
         self.paused = False
+        self.respiration = pygame.mixer.Sound('sound/respiration.mp3')
+        self.title = pygame.image.load('assets/Titre.png')
+        self.cadavre = pygame.image.load('assets/CADAVRE.jpg')
+        self.grain = pygame.image.load('assets/GRAIN.png')
+        self.resume_button = pygame.image.load('assets/Resume.png')
+        self.resume_button = pygame.transform.scale(self.resume_button, (200, 50))
+        self.resume_button_rect = self.resume_button.get_rect()
+        self.resume_button_rect.x = 300
+        self.resume_button_rect.y = 150
+        self.quit_button = pygame.image.load('assets/Quit_Game.png')
+        self.quit_button = pygame.transform.scale(self.quit_button, (200, 50))
+        self.quit_button_rect = self.resume_button.get_rect()
+        self.quit_button_rect.x = 300
+        self.quit_button_rect.y = 450
+        self.doorclosed = False
 
     def update(self, screen):
         if self.paused:
-            self.pause()
+            self.pause(screen)
         elif self.screamer:
             self.death_monster(screen)
         else:
@@ -67,7 +80,7 @@ class Game(animation.AnimateSprite):
                         elif self.at_door:
                             self.start_animation('porte')
                     if event.key == pygame.K_ESCAPE:
-                        self.is_playing = False
+                        self.paused = True
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_SPACE:
                         if not self.at_door and not self.at_bed:
@@ -124,9 +137,11 @@ class Game(animation.AnimateSprite):
 
     def close_door(self):
         self.image = pygame.image.load('assets/chambre/chambre6.png')
+        self.doorclosed = True
 
     def open_door(self):
         self.image = pygame.image.load('assets/chambre/chambre7.png')
+        self.doorclosed = False
 
     def flashlight_on(self):
         if self.at_door:
@@ -140,6 +155,8 @@ class Game(animation.AnimateSprite):
     def flashlight_off(self):
         if self.at_door:
             self.image = pygame.image.load('assets/chambre/chambre7.png')
+            if self.is_atdoor and not self.doorclosed:
+                self.respiration.play()
         elif self.at_bed:
             self.image = pygame.image.load('assets/lit/lit4.png')
 
@@ -175,7 +192,8 @@ class Game(animation.AnimateSprite):
         else:
             heure = ' am'
         text = pygame.font.Font('font.ttf', self.size).render(str(self.what_hour()) + heure, True, (255, 255, 255))
-        screen.blit(text, (0, 0))
+        if not self.at_bed and not self.at_door:
+            screen.blit(text, (0, 0))
 
     def death_monster(self, screen):
         screen.blit(pygame.transform.scale(self.cadavre, (1500, 1500)), (-750, -200))
@@ -189,6 +207,8 @@ class Game(animation.AnimateSprite):
             self.is_playing = False
 
     def death_cum(self):
+        # tu t'es noye dans ton mesper
+        # bruit de noyade
         pass
 
     def reset(self):
@@ -197,8 +217,24 @@ class Game(animation.AnimateSprite):
         self.is_atbed = False
         self.screamtime = self.scream.get_length() * 7
         self.horny_bar_width = 300
-        self.screamer = True
+        self.screamer = False
         self.paused = False
+        self.at_bed = False
+        self.at_door = False
+        self.doorclosed = False
 
-    def pause(self):
-        pass
+    def pause(self, screen):
+        screen.blit(self.grain, (0, 0))
+        screen.blit(self.resume_button, self.resume_button_rect)
+        screen.blit(self.quit_button, self.quit_button_rect)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if self.resume_button_rect.collidepoint(pygame.mouse.get_pos()):
+                    self.is_playing = True
+                    self.paused = False
+                if self.quit_button_rect.collidepoint(pygame.mouse.get_pos()):
+                    self.is_playing = False
+                    self.paused = False

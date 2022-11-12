@@ -30,9 +30,9 @@ while game.running:
     if game.is_playing:
         game.update(screen)
     else:
-        screen.blit(cadavre, (0, 0))
-        screen.blit(title, (0, 0))
-        screen.blit(grain, (0, 0))
+        screen.blit(game.cadavre, (0, 0))
+        screen.blit(game.title, (0, 0))
+        screen.blit(game.grain, (0, 0))
         screen.blit(play_button, play_button_rect)
         game.reset()
 

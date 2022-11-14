@@ -11,14 +11,11 @@ game = Game()
 background = pygame.image.load('assets/noir.png')
 
 play_button = pygame.image.load('assets/NEW_GAME.png')
-play_button = pygame.transform.scale(play_button, (200, 50))
+play_button = pygame.transform.scale(play_button, (300, 75))
 play_button_rect = play_button.get_rect()
 play_button_rect.x = 20
 play_button_rect.y = 300
 
-title = pygame.image.load('assets/Titre.png')
-cadavre = pygame.image.load('assets/CADAVRE.jpg')
-grain = pygame.image.load('assets/GRAIN.png')
 clock = pygame.time.Clock()
 
 # game run
@@ -34,6 +31,7 @@ while game.running:
         screen.blit(game.title, (0, 0))
         screen.blit(game.grain, (0, 0))
         screen.blit(play_button, play_button_rect)
+        game.write_nights(screen)
         game.reset()
 
         for event in pygame.event.get():

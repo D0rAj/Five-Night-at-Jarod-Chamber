@@ -20,7 +20,7 @@ class Game(animation.AnimateSprite):
         self.hour = 0
         self.size = 50
         self.sleep = 0
-        self.cooldown = 280
+        self.cooldown = 280  # 40 * 7
         self.is_atdoor = False
         self.is_atbed = False
         self.screamer = False
@@ -43,18 +43,29 @@ class Game(animation.AnimateSprite):
         self.quit_button_rect.x = 300
         self.quit_button_rect.y = 450
         self.doorclosed = False
+        self.counter_monster = 7*7
+        self.nuits = 1
+        self.passing_nuit = False
+        self.danger_door = 0
 
     def update(self, screen):
         if self.paused:
             self.pause(screen)
         elif self.screamer:
             self.death_monster(screen)
+        elif self.passing_nuit:
+            self.pass_night()
         else:
+            if self.is_atdoor:
+                print("ARAAA")
+            else:
+                print("not ARAAA")
             screen.blit(self.image, self.rect)
             self.update_animation()
             self.update_horny_bar(screen, self.goute_do)
             self.update_time(screen)
-            self.update_monster(screen)
+            self.update_monster()
+            self.update_nights()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
@@ -100,12 +111,19 @@ class Game(animation.AnimateSprite):
         horny_bar_position = [250, 550, self.horny_bar_width, 25]
         back_horny_bar_position = [250, 550, self.horny_bar_max_width, 25]
 
-        self.horny_bar_width -= .5
+        diff = 0
+
+        if self.nuits > 4:
+            diff = 1
+        elif self.nuits > 1:
+            diff = .5
+
+        self.horny_bar_width -= diff
         if not self.at_door and not self.at_bed:
             if self.horny_bar_width > 300:
                 self.horny_bar_width = 300
             if self.horny_bar_width <= 0:
-                self.is_playing = False
+                self.death_cum()
             pygame.draw.rect(surface, back_horny_bar_color, back_horny_bar_position)
             pygame.draw.rect(surface, horny_bar_color, horny_bar_position)
             surface.blit(goute_do, (0, 0))
@@ -115,11 +133,45 @@ class Game(animation.AnimateSprite):
         self.write_time(screen)
 
     def update_animation(self):
+        if self.at_door or self.at_bed:
+            self.rect.y = 0
         self.animate()
 
-    def update_monster(self, screen):
-        if self.cooldown > 0:
-            self.cooldown -= 1
+    def update_monster(self):
+        if self.is_atdoor and not self.doorclosed and self.at_door:
+            self.respiration.play()
+        else:
+            self.respiration.stop()
+
+        if self.doorclosed and self.is_atdoor and self.counter_monster > 0:
+            self.counter_monster -= 1
+        elif self.counter_monster == 0:
+            self.is_atdoor = False
+            self.counter_monster = 7*7
+        elif self.is_atdoor and not self.doorclosed and self.nuits > 1:
+            self.danger_door += 1
+
+        temps = 25
+
+        if self.nuits > 4:
+            temps = 13
+        elif self.nuits > 2:
+            temps = 18
+
+        if self.danger_door > temps*7:
+            self.screamer = True
+
+        dif = 0
+
+        if self.nuits > 4:
+            dif = 2
+        elif self.nuits > 2:
+            dif = 1
+        elif self.nuits > 1:
+            dif = .5
+
+        if self.cooldown > 0 and not self.is_atdoor:
+            self.cooldown -= dif
         else:
             self.is_atdoor = True
             self.cooldown = 840
@@ -138,6 +190,7 @@ class Game(animation.AnimateSprite):
     def close_door(self):
         self.image = pygame.image.load('assets/chambre/chambre6.png')
         self.doorclosed = True
+        self.respiration.stop()
 
     def open_door(self):
         self.image = pygame.image.load('assets/chambre/chambre7.png')
@@ -155,8 +208,6 @@ class Game(animation.AnimateSprite):
     def flashlight_off(self):
         if self.at_door:
             self.image = pygame.image.load('assets/chambre/chambre7.png')
-            if self.is_atdoor and not self.doorclosed:
-                self.respiration.play()
         elif self.at_bed:
             self.image = pygame.image.load('assets/lit/lit4.png')
 
@@ -196,6 +247,7 @@ class Game(animation.AnimateSprite):
             screen.blit(text, (0, 0))
 
     def death_monster(self, screen):
+        self.respiration.stop()
         screen.blit(pygame.transform.scale(self.cadavre, (1500, 1500)), (-750, -200))
         if not self.screamed:
             self.scream.play()
@@ -207,9 +259,9 @@ class Game(animation.AnimateSprite):
             self.is_playing = False
 
     def death_cum(self):
+        self.is_playing = False
         # tu t'es noye dans ton mesper
         # bruit de noyade
-        pass
 
     def reset(self):
         self.screamed = False
@@ -222,6 +274,8 @@ class Game(animation.AnimateSprite):
         self.at_bed = False
         self.at_door = False
         self.doorclosed = False
+        self.image = pygame.image.load('assets/chambre.png')
+        self.passing_nuit = False
 
     def pause(self, screen):
         screen.blit(self.grain, (0, 0))
@@ -238,3 +292,18 @@ class Game(animation.AnimateSprite):
                 if self.quit_button_rect.collidepoint(pygame.mouse.get_pos()):
                     self.is_playing = False
                     self.paused = False
+
+    def write_nights(self, screen):
+        text = pygame.font.Font('font.ttf', round(self.size / 2)).render("Nuit " + str(self.nuits), True, (255, 255, 255))
+        screen.blit(text, (30, 270))
+
+    def update_nights(self):
+        if self.what_hour() == 6:
+            self.nuits += 1
+            self.passing_nuit = True
+        pass
+
+    def pass_night(self):
+        self.is_playing = False
+        # probablement une video pour le passage de la nuit
+        pass
